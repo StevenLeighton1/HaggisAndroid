@@ -22,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.example.asap.haggisandroid.LoggedInActivity"
+            android:label="@string/login_label"
+            android:parentActivityName="com.example.asap.haggisandroid.LoginActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.asap.haggisandroid.LoginActivity" />
+        </activity>
     </application>
 
 </manifest>

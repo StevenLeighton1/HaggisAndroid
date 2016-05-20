@@ -11,6 +11,7 @@ import android.app.LoaderManager.LoaderCallbacks;
 
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -28,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +67,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);      //some super class function
-        setContentView(R.layout.activity_login); //R is the activity login XML
+        setContentView(R.layout.activity_login); //R is the activity login XML, sets view
 
         // Set up the login form.
         // gets View 'email' from XML
@@ -195,13 +197,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
+            mAuthTask = null;
             focusView.requestFocus();
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            mAuthTask = new UserLoginTask(email, password); //create new userlogin task
+            boolean result = mAuthTask.doInBackground();    //check credentials
+
+            //if correct credentials
+            if(result){
+                Intent login = new Intent(this, LoggedInActivity.class);
+                startActivity(login);
+            }
+            else{
+                mEmailView.setError(getString(R.string.error_wrong_info));
+                focusView = mEmailView;
+                mAuthTask = null;
+                focusView.requestFocus();
+            }
         }
     }
 
@@ -337,9 +351,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return pieces[1].equals(mPassword);
                 }
             }
-
-            // TODO: register the new account here.
-            return true;
+            return false;
         }
 
         @Override
